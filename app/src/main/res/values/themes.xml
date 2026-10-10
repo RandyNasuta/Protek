@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Protek" parent="Theme.Material3.DayNight.NoActionBar">
+
+    </style>
+
+    <style name="Theme.Protek.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+<!--        <item name="windowSplashScreenBackground">@color/blue_40</item>-->
+        <item name="postSplashScreenTheme">@style/Theme.Protek</item>
+    </style>
+</resources>
