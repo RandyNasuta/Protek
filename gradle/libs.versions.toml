@@ -17,6 +17,9 @@ hilt = "2.60.1"
 hiltNavigation = "1.4.0"
 splashScreen = "1.0.0"
 navigation = "2.10.2"
+retrofit = "2.9.0"
+gson = "3.0.0"
+okhttp = '5.5.0'
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +48,10 @@ hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
 splash-screen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit"}
+gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "gson" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 
 [plugins]
