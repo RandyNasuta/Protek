@@ -25,6 +25,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -34,23 +36,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.protek.ui.theme.ProtekTheme
 import com.example.protek.utils.DetectionCategory
+
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigate: (DetectionCategory) -> Unit = {},
-//    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
-//    val uiState by viewModel.uiState.collectAsState()
-
-    val colorStops = arrayOf(
-        0.0f to Color(0xFF000000), 0.2f to Color(0xFF0A0A2A), 1f to Color(0xFF1A1A3A)
+    HomeContent(
+        modifier = modifier.fillMaxSize(),
+        onNavigate = onNavigate
     )
+}
 
+@Composable
+fun HomeContent(
+    modifier: Modifier,
+    onNavigate: (DetectionCategory) -> Unit
+) {
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
     ) { innerPadding ->
         Box(
             modifier = modifier
@@ -74,7 +84,7 @@ fun HomeScreen(
             ) {
                 CardMenu(
                     title = "Deteksi Pesan Penipuan",
-                    description = "Analisis pesan SMS atau chat mencurigakan dengan teknologi AI.",
+                    description = "Analisis pesan SMS atau chat mencurigakan.",
                     icon = Icons.Default.Email,
                     iconTint = Color(0xFF4FACFE),
                     onClick = {
@@ -85,8 +95,20 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 CardMenu(
+                    title = "Deteksi Berita Palsu",
+                    description = "Analisis Berita atau Artikel yang mengandung Berita Palsu.",
+                    icon = Icons.Default.Newspaper,
+                    iconTint = Color(0xFF4FFE58),
+                    onClick = {
+                        onNavigate(DetectionCategory.FAKE_NEWS)
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                CardMenu(
                     title = "Deteksi Deepfake",
-                    description = "Analisis Gambar atau Video yang mengandung Deepfake dengan teknologi AI",
+                    description = "Analisis Gambar atau Video yang mengandung Deepfake.",
                     icon = Icons.Default.Image,
                     iconTint = Color(0xFFFE4F4F),
                     onClick = {
@@ -94,17 +116,7 @@ fun HomeScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
 
-                CardMenu(
-                    title = "Deteksi Berita Palsu",
-                    description = "Analisis Berita atau Artikel yang mengandung Berita Palsu dengan teknologi AI",
-                    icon = Icons.Default.Newspaper,
-                    iconTint = Color(0xFF4FFE58),
-                    onClick = {
-                        onNavigate(DetectionCategory.FAKE_NEWS)
-                    }
-                )
             }
         }
     }
@@ -180,8 +192,9 @@ fun CardMenu(
 
 @Preview
 @Composable
-private fun HomeScreenPreview() {
-    ProtekTheme {
-        HomeScreen()
-    }
+private fun HomeContentPreview() {
+    HomeContent(
+        onNavigate = {},
+        modifier = Modifier
+    )
 }

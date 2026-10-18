@@ -1,11 +1,13 @@
 package com.example.protek.ui.detection
 
 
+import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.protek.data.remote.dto.DetectionData
 import com.example.protek.data.repository.DetectionRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -19,11 +21,11 @@ sealed class UiState {
     data class Success(val data: DetectionData) : UiState()
     data class Error(val message: String) : UiState()
 }
-
+@HiltViewModel
 class DetectionViewModel @Inject constructor(
     private val repository: DetectionRepository
 ) : ViewModel() {
-
+    private val TAG: String = "DetectionViewModel"
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
     val uiState: StateFlow<UiState> = _uiState
 
@@ -33,6 +35,7 @@ class DetectionViewModel @Inject constructor(
 
             try {
                 val result = repository.detectPhishingText(text)
+                Log.i(TAG, "detectPhishingText: Hasil scan adalah: ${result.message}")
                 _uiState.value = UiState.Success(result)
             } catch (e: HttpException) {
                 _uiState.value = UiState.Error("Terjadi kesalahan server: ${e.message()}")
