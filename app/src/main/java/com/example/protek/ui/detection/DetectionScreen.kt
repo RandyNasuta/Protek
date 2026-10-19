@@ -1,17 +1,30 @@
 package com.example.protek.ui.detection
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,6 +34,7 @@ import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -34,12 +48,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.example.protek.utils.DetectionCategory
 
 @Composable
@@ -49,28 +67,55 @@ fun DetectionScreen(
     detectionType: DetectionCategory
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    DetectionContent(
-        modifier = modifier.fillMaxSize(),
-        uiState = uiState,
-        detectionType = detectionType,
-        onDetectClick = { inputText ->
-            viewModel.detectPhishingText(inputText)
+    when(detectionType) {
+        DetectionCategory.SCAM_MESSAGE -> {
+            DetectionScamMessageContent(
+                modifier = modifier.fillMaxSize(),
+                uiState = uiState,
+                onDetectClickText = { inputText ->
+                    viewModel.detectPhishingText(inputText)
+                },
+                onDetectClickImage = { selectedFileUri ->
+                    selectedFileUri.let { uri ->
+                        viewModel.detectPhishingImage(context, uri)
+                    }
+                }
+            )
         }
-    )
+        DetectionCategory.FAKE_NEWS -> {
+
+        }
+
+        DetectionCategory.DEEPFAKE -> {
+
+        }
+        else -> {
+            Text(text = "Unsupported Detection Type")
+        }
+    }
 }
 
 @Composable
-fun DetectionContent(
+fun DetectionScamMessageContent(
     modifier: Modifier = Modifier,
     uiState: UiState,
-    detectionType: DetectionCategory,
-    onDetectClick: (String) -> Unit,
+    onDetectClickText: (String) -> Unit = {},
+    onDetectClickImage: (Uri) -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
     var menuDropdown by remember { mutableStateOf("Text") }
     var isInputText by remember { mutableStateOf(true) }
     var userInputText by remember { mutableStateOf("") }
+    var selectedFileUri by remember { mutableStateOf<Uri?>(null) }
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            selectedFileUri = uri
+        }
+    )
 
     Scaffold(
         modifier = modifier
@@ -78,6 +123,7 @@ fun DetectionContent(
         Box(
             modifier = modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
                 .background(
                     Brush.verticalGradient(
@@ -92,7 +138,7 @@ fun DetectionContent(
                 modifier = modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 ExposedDropdownMenuBox(
                     expanded = expanded,
@@ -193,18 +239,85 @@ fun DetectionContent(
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                     )
+                } else {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 160.dp)
+                            .clickable {
+                                filePickerLauncher.launch("image/*")
+                            },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFA29BFE).copy(alpha = 0.15f)
+                        ),
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = Color(0xFFA29BFE).copy(alpha = 0.5f)
+                        )
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (selectedFileUri != null) {
+                                AsyncImage(
+                                    model = selectedFileUri,
+                                    contentDescription = "Preview Gambar Pilihan",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            } else {
+                                Column(
+                                    modifier = Modifier.padding(all = 16.dp),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Icon(
+                                        contentDescription = "Upload Image",
+                                        imageVector = Icons.Default.AddPhotoAlternate,
+                                        tint = Color(0xFFA29BFE),
+                                        modifier = Modifier.size(48.dp)
+                                    )
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    Text(
+                                        text = "Upload Gambar",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 16.sp
+                                    )
+
+                                    Spacer(modifier = Modifier.height(4.dp))
+
+                                    Text(
+                                        text = "Cari file gambar di perangkat",
+                                        color = Color.White.copy(alpha = 0.6f),
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { onDetectClick(userInputText) },
+                    onClick = {
+                        if (isInputText) {
+                            onDetectClickText(userInputText)
+                        } else {
+                            onDetectClickImage(selectedFileUri!!)
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
                     shape = RoundedCornerShape(12.dp),
                 ) {
-                    Text("Deteksi Sekarang")
+                    Text("Deteksi")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -277,10 +390,8 @@ fun DetectionContent(
 @Preview(showBackground = true)
 @Composable
 private fun DetectiContentPreview() {
-    DetectionContent(
+    DetectionScamMessageContent(
         modifier = Modifier.fillMaxSize(),
         uiState = UiState.Idle,
-        detectionType = DetectionCategory.SCAM_MESSAGE,
-        onDetectClick = {}
     )
 }

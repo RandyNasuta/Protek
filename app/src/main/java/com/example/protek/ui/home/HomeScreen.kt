@@ -83,7 +83,7 @@ fun HomeContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CardMenu(
-                    title = "Deteksi Pesan Penipuan",
+                    title = "Pesan Penipuan",
                     description = "Analisis pesan SMS atau chat mencurigakan.",
                     icon = Icons.Default.Email,
                     iconTint = Color(0xFF4FACFE),
@@ -95,7 +95,7 @@ fun HomeContent(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 CardMenu(
-                    title = "Deteksi Berita Palsu",
+                    title = "Berita Palsu",
                     description = "Analisis Berita atau Artikel yang mengandung Berita Palsu.",
                     icon = Icons.Default.Newspaper,
                     iconTint = Color(0xFF4FFE58),
@@ -107,7 +107,7 @@ fun HomeContent(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 CardMenu(
-                    title = "Deteksi Deepfake",
+                    title = "Deepfake",
                     description = "Analisis Gambar atau Video yang mengandung Deepfake.",
                     icon = Icons.Default.Image,
                     iconTint = Color(0xFFFE4F4F),
