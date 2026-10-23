@@ -6,6 +6,11 @@ data class TextDetectionRequest(
     @SerializedName("text") val text: String
 )
 
+data class UrlDetectionRequest(
+    @SerializedName("url") val url: String,
+    @SerializedName("deep_check") val deepCheck: Boolean
+)
+
 data class BaseResponse<T>(
     @SerializedName("code") val code: Int,
     @SerializedName("status") val status: String,
@@ -15,7 +20,7 @@ data class BaseResponse<T>(
 
 data class DetectionData(
     @SerializedName("type") val type: String,
-    @SerializedName("is_phishing") val isPhishing: Boolean,
+    @SerializedName("is_fraud") val isFraud: Boolean,
     @SerializedName("confidence") val confidence: Double,
     @SerializedName("severity_level") val severityLevel: String,
     @SerializedName("message") val message: String,

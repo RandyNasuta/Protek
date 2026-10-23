@@ -106,17 +106,15 @@ fun HomeContent(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                CardMenu(
-                    title = "Deepfake",
-                    description = "Analisis Gambar atau Video yang mengandung Deepfake.",
-                    icon = Icons.Default.Image,
-                    iconTint = Color(0xFFFE4F4F),
-                    onClick = {
-                        onNavigate(DetectionCategory.DEEPFAKE)
-                    }
-                )
-
-
+//                CardMenu(
+//                    title = "Deepfake",
+//                    description = "Analisis Gambar atau Video yang mengandung Deepfake.",
+//                    icon = Icons.Default.Image,
+//                    iconTint = Color(0xFFFE4F4F),
+//                    onClick = {
+//                        onNavigate(DetectionCategory.DEEPFAKE)
+//                    }
+//                )
             }
         }
     }

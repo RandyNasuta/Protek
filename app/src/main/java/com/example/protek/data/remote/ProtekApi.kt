@@ -2,7 +2,9 @@ package com.example.protek.data.remote
 
 import com.example.protek.data.remote.dto.BaseResponse
 import com.example.protek.data.remote.dto.DetectionData
+import com.example.protek.data.remote.dto.FakeNewsDetectionData
 import com.example.protek.data.remote.dto.TextDetectionRequest
+import com.example.protek.data.remote.dto.UrlDetectionRequest
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.Multipart
@@ -20,4 +22,16 @@ interface ProtekApi {
     suspend fun detectionPhisingImage(
         @Part file: MultipartBody.Part
     ): BaseResponse<DetectionData>
+
+    @POST("/api/detect/fakenews/url")
+    suspend fun detectionFakeNewsUrl(
+        @Body request: UrlDetectionRequest
+    ): BaseResponse<FakeNewsDetectionData>
+
+    @Multipart
+    @POST("/api/detect/fakenews/image")
+    suspend fun detectionFakeNewsImage(
+        @Part file: MultipartBody.Part,
+        @Part("deep_check") deepCheck: Boolean
+    ): BaseResponse<FakeNewsDetectionData>
 }
